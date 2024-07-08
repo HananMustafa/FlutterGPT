@@ -1,1 +1,1 @@
-# FlutterGPT
+An Android application leveraging Flutter and Dart, featuring integration of OpenAI's API. The app autonomously processes and generates responses based on user inputs, enabling customizable output configurations using GPT.
