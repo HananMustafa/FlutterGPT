@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:fluttergpt/GPTResponse.dart';
 
 void main() {
@@ -12,12 +14,18 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter gpt',
+      debugShowCheckedModeBanner: false,
+      title: 'Flutter Gpt',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSwatch(
+    primarySwatch: Colors.blue, // Adjust as needed
+    backgroundColor: Color(0xFFECEFF1),
+    errorColor: Colors.red, // Example of setting error color
+    brightness: Brightness.light, // Adjust brightness
+  ),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Flutter gpt'),
+      home: const MyHomePage(title: 'Flutter Gpt'),
     );
   }
 }
@@ -35,79 +43,29 @@ class _MyHomePageState extends State<MyHomePage> {
 
   TextEditingController questionctrl = new TextEditingController();
   String responseText= '';
+  String inputText= '';
   bool Vresponse=false;
-
-
-
-
-
-
-
-
-
+  bool Vinput=false;
 
 
   //CALLING GPT FUNCTION
   //EXTRACTING TEXT FROM PDF METHOD
   Future<void> _callGPT(String question) async {
     try {
-
-                    //SENDING PDF'S TEXT TO GPT
-                      final GPTResponse1 = GPTResponse();
-                      final result = await GPTResponse1.askQuestion(question?? "");
-                      responseText = result['responseText'] ?? "";
-                      print('GPT Returned: $responseText');
-
-
-                      // //CONVERTING ACTIVITIES INTO LIST
-                      // final String activitiesString = result['ACTIVITIES'] ?? '';
-
-                      // // Split activitiesString into a list of maps
-                      // final List<Map<String, dynamic>> activities = activitiesString
-                      //   .split(',')
-                      //   .map((activity) => {'activity': activity.trim()})
-                      //   .toList();
-
-
-                      // NAVIGATING TO AiTour.dart
-                      // Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute(
-                      //     builder: (context) => AiTour(
-                      //       DestPlace: result['DESTINATION PLACE'] ?? "",
-                      //       DeptPlace: result['DEPARTURE PLACE'] ?? "",
-                      //       DeptTime: result['DEPARTURE TIME'] ?? "",
-                      //       ReturnTime: result['RETURN TIME'] ?? "",
-                      //       Title: result['TITLE'] ?? "",
-                      //       included: result['INCLUDED'] ?? "",
-                      //       state: result['STATE'] ?? "",
-                      //       seats: result['SEATS'] ?? "",
-                      //       cost: result['COST'] ?? "",
-                      //       //activities: activities,
-                      //       activity: result['ACTIVITY'] ?? "",
-                      //     ),
-                      //   ),
-                      // );
-                      // }else{
-                      //   //First choose a pdf file!
-                      //   setState(() {
-                      //     Vpdf=true;
-                      //   });
-                      // }
+        //SENDING PDF'S TEXT TO GPT
+        final GPTResponse1 = GPTResponse();
+        final result = await GPTResponse1.askQuestion(question?? "");
+        responseText = result['responseText'] ?? "";
+        print('GPT Returned: $responseText');
+        setState(() {
+          Vresponse=true;
+        });
 
     } catch (e) {
       //Handle any exceptions
       print('Error extracting text: $e');
     }
   }
-
-
-
-
-
-
-
-
 
 
 
@@ -121,54 +79,136 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
       ),
-      body: SingleChildScrollView(
 
+
+
+
+  body: Container(
+
+    child: Column(children: [
+
+
+
+      //TEXT WIDGET TO DISPLAY USER INPUT
+      if(Vinput)
+      Align(
+        alignment: Alignment.centerRight, // Aligns the message box to the left
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+        child: Container(
+            decoration: BoxDecoration(
+            color: Color.fromARGB(255, 65, 64, 64), // Background color
+            borderRadius: BorderRadius.circular(10.0), // Rounded corners
+            border: Border.all(
+              color: Color.fromARGB(255, 65, 64, 64),
+              width: 1, // Border width
+            ),
+          ),
+            constraints: BoxConstraints(
+            maxWidth: MediaQuery.of(context).size.width * 0.7, // Limits width to 70% of screen width
+          ),
+            padding: const EdgeInsets.all(16.0),
         child: Column(
-          children: [
+            crossAxisAlignment: CrossAxisAlignment.start, // Aligns text to the start
+            children: [
+              Text(
+                'User:',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                  fontSize: 12,
+                ),
+              ),
+              SizedBox(height: 8.0), // Space between title and message
+              Text(
+                inputText,
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    ),
+
+
+
 
 
 
 
 //TEXT WIDGET TO DISPLAY GPT RESULT
 if(Vresponse)
-            Container(
-              child: 
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Container(
-
-                  decoration: BoxDecoration(
-              border: Border.all(
-                color: Colors.black,
-                width: 2, // Adjust the width as needed
-              ),
+            Align(
+      alignment: Alignment.centerLeft, // Aligns the message box to the left
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Color.fromARGB(255, 65, 64, 64), // Background color
+            borderRadius: BorderRadius.circular(10.0), // Rounded corners
+            border: Border.all(
+              color: Color.fromARGB(255, 65, 64, 64),
+              width: 1, // Border width
             ),
-            
-                  width: 300, //change as per your need
-                  height: 300, //change as per your need
-                  child: SingleChildScrollView(
-                    child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                    child: Column(children: [
-                      const Text('GPT Result: ',style: TextStyle(fontWeight: FontWeight.bold),),
-                      Text(responseText),
+          ),
+          constraints: BoxConstraints(
+            maxWidth: MediaQuery.of(context).size.width * 0.7, // Limits width to 70% of screen width
+          ),
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start, // Aligns text to the start
+            children: [
+              Text(
+                'Chat gpt:',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                  fontSize: 12,
+                ),
+              ),
+              SizedBox(height: 8.0), // Space between title and message
+              Text(
+                responseText,
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    ),
 
-                    ],)
-                  ),)
-                )
-              ),),
 
 
 
 
 
 
-              
+       
+
+
+
+          ],)),
+    
+    
+    
+    bottomNavigationBar: BottomAppBar(
+      
+
+      child:  Container(
+
+        child: Container(
+                //height: 400,
+                margin: EdgeInsets.only(left: 20, right: 3),
+              child: Row(children: [
+
 
                 //TEXT FIELD
-              Container(
-                margin: const EdgeInsets.only(top: 5, right:20, left:20),
-                alignment: Alignment.topLeft,
+               Flexible(
+                
                     child: TextField(
 
                       controller: questionctrl,
@@ -176,6 +216,11 @@ if(Vresponse)
                       //autofocus: true,
                   decoration: InputDecoration(
                     border: const OutlineInputBorder(),
+
+                    enabledBorder: OutlineInputBorder(
+      borderSide: BorderSide(color: Colors.grey), // Adjust color as needed
+    ),
+
                     focusedBorder: const OutlineInputBorder(
                       borderSide: BorderSide(color: Color.fromRGBO(255, 107, 0, 1,), width: 2.0,),
                     ),
@@ -186,28 +231,33 @@ if(Vresponse)
                     ),
                       ),  ),
 
-
-
-
                 IconButton(
                             icon: const Icon(
                               Icons.send,
-                              color: Colors.black,
+                              color: Colors.grey,
                             ),
                             onPressed: () {
+
                     setState(() {
                       Vresponse=false;
+                      Vinput=false;
                     });
                     _callGPT(questionctrl.text);
                     setState(() {
+                      inputText = questionctrl.text;
+                      questionctrl.text='';
                       Vresponse= true;
+                      Vinput=true;
                     });
                             },),
-              
+
+                
 
 
-
-
-
-          ],))
-    );}}
+                            ],),),),
+    
+    
+    
+    
+    
+    ),);}}
